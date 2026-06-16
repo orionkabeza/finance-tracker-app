@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Finance Tracker</title>
+  <link rel="stylesheet" href="styles/main.css" />
+  <link rel="stylesheet" href="styles/components.css" />
+</head>
+<body>
+
+  <!-- Skip link: lets keyboard users jump past the nav straight to content -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <header>
+    <div class="header-inner">
+      <span class="logo">💰Finance Tracker</span>
+      <nav aria-label="Main navigation">
+        <ul role="list">
+          <li><a href="#about" class="nav-link">About</a></li>
+          <li><a href="#dashboard" class="nav-link">Dashboard</a></li>
+          <li><a href="#records" class="nav-link">Records</a></li>
+          <li><a href="#add" class="nav-link">Add</a></li>
+          <li><a href="#settings" class="nav-link">Settings</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main-content">
+
+    <!-- ABOUT -->
+    <section id="about" class="page-section">
+      <h1>Student Finance Tracker</h1>
+      <p>Track your student expenses, set budget caps, and understand your spending habits.</p>
+      <p>Built by <a href="https://github.com/orionkabeza">Orion Kabeza</a> · <a href="mailto:o.kabeza@alustudent.com">o.kabeza@alustudent.com</a></p>
+    </section>
+
+    <!-- DASHBOARD -->
+    <section id="dashboard" class="page-section" hidden>
+      <h2>Dashboard</h2>
+      <!-- Stats and chart go here in M5 -->
+      <!-- ARIA live region: announces budget cap status to screen readers -->
+      <div role="status" aria-live="polite" id="cap-status"></div>
+    </section>
+
+    <!-- RECORDS -->
+    <section id="records" class="page-section" hidden>
+      <h2>Records</h2>
+      <!-- Search bar and table go here in M4 -->
+    </section>
+
+    <!-- ADD / EDIT FORM -->
+    <section id="add" class="page-section" hidden>
+      <h2>Add Transaction</h2>
+      <!-- Form goes here in M3 -->
+    </section>
+
+    <!-- SETTINGS -->
+    <section id="settings" class="page-section" hidden>
+      <h2>Settings</h2>
+      <!-- Currency settings go here in M6 -->
+    </section>
+
+  </main>
+
+  <footer>
+    <p>Student Finance Tracker &copy; 2026</p>
+  </footer>
+
+  <!-- Scripts loaded at the bottom so HTML is parsed first -->
+  <script type="module" src="scripts/storage.js"></script>
+  <script type="module" src="scripts/state.js"></script>
+  <script type="module" src="scripts/validators.js"></script>
+  <script type="module" src="scripts/search.js"></script>
+  <script type="module" src="scripts/ui.js"></script>
+
+</body>
+</html>
