@@ -1,9 +1,7 @@
-// ui.js — DOM rendering and event handling
 import { validateDescription, validateAmount, validateDate, validateCategory, validateForm } from './validators.js';
-import { loadData, saveData } from './storage.js';
-import { getState, addRecord, updateRecord } from './state.js';
+import { getState, addRecord, updateRecord, deleteRecord } from './state.js';
 
-// ── Section navigation ───────────────────────────────────────────────────────
+// ── Section navigation ────────────────────────────────────────────────────────
 const sections = document.querySelectorAll('.page-section');
 const navLinks  = document.querySelectorAll('.nav-link');
 
@@ -12,22 +10,21 @@ export function showSection(id) {
   navLinks.forEach(link => {
     link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
   });
+  if (id === 'records') renderRecords();
 }
 
 navLinks.forEach(link => {
   link.addEventListener('click', e => {
     e.preventDefault();
-    const id = link.getAttribute('href').slice(1);
-    showSection(id);
+    showSection(link.getAttribute('href').slice(1));
   });
 });
 
-// ── Form elements ────────────────────────────────────────────────────────────
+// ── Form elements ─────────────────────────────────────────────────────────────
 const form        = document.getElementById('transaction-form');
 const formTitle   = document.getElementById('form-title');
 const formStatus  = document.getElementById('form-status');
 const editIdInput = document.getElementById('edit-id');
-const cancelBtn   = document.getElementById('cancel-btn');
 
 const fields = {
   description: document.getElementById('field-description'),
@@ -43,14 +40,13 @@ const errorEls = {
   category:    document.getElementById('err-category'),
 };
 
-// ── Show/clear a single field error ─────────────────────────────────────────
+// ── Field error display ───────────────────────────────────────────────────────
 function setError(field, message) {
   errorEls[field].textContent = message;
   fields[field].classList.toggle('invalid', message !== '');
 }
 
-// ── Real-time validation: validate each field as user types/changes ──────────
-// This gives instant feedback without waiting for form submit
+// ── Real-time validation ──────────────────────────────────────────────────────
 fields.description.addEventListener('input', () =>
   setError('description', validateDescription(fields.description.value)));
 
@@ -63,9 +59,9 @@ fields.date.addEventListener('input', () =>
 fields.category.addEventListener('change', () =>
   setError('category', validateCategory(fields.category.value)));
 
-// ── Form submit ──────────────────────────────────────────────────────────────
+// ── Form submit ───────────────────────────────────────────────────────────────
 form.addEventListener('submit', e => {
-  e.preventDefault(); // stop page reload
+  e.preventDefault();
 
   const data = {
     description: fields.description.value,
@@ -75,8 +71,6 @@ form.addEventListener('submit', e => {
   };
 
   const { valid, errors } = validateForm(data);
-
-  // Show all errors at once if any field is invalid
   Object.keys(errors).forEach(field => setError(field, errors[field]));
 
   if (!valid) {
@@ -84,9 +78,7 @@ form.addEventListener('submit', e => {
     return;
   }
 
-  const isEditing = editIdInput.value !== '';
-
-  if (isEditing) {
+  if (editIdInput.value) {
     updateRecord(editIdInput.value, data);
     formStatus.textContent = 'Transaction updated.';
   } else {
@@ -98,20 +90,144 @@ form.addEventListener('submit', e => {
   showSection('records');
 });
 
-// ── Cancel button ────────────────────────────────────────────────────────────
-cancelBtn.addEventListener('click', () => {
+// ── Cancel ────────────────────────────────────────────────────────────────────
+document.getElementById('cancel-btn').addEventListener('click', () => {
   resetForm();
   showSection('records');
 });
 
-// ── Reset form to blank state ────────────────────────────────────────────────
 function resetForm() {
   form.reset();
-  editIdInput.value = '';
+  editIdInput.value     = '';
   formTitle.textContent = 'Add Transaction';
   formStatus.textContent = '';
   Object.keys(errorEls).forEach(f => setError(f, ''));
 }
 
-// ── Initial load ─────────────────────────────────────────────────────────────
+// ── Records table ─────────────────────────────────────────────────────────────
+const tbody       = document.getElementById('records-tbody');
+const emptyState  = document.getElementById('empty-state');
+const searchMeta  = document.getElementById('search-meta');
+const searchInput = document.getElementById('search-input');
+const searchCase  = document.getElementById('search-case');
+
+let sortCol = 'date';
+let sortDir = -1;
+
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function highlight(text, regex) {
+  if (!regex) return escapeHtml(text);
+  return escapeHtml(text).replace(regex, m => `<mark>${m}</mark>`);
+}
+
+export function renderRecords() {
+  let records = [...getState()];
+  const query = searchInput.value.trim();
+
+  // Sort
+  records.sort((a, b) => {
+    if (sortCol === 'amount') return (a.amount - b.amount) * sortDir;
+    return String(a[sortCol]).localeCompare(String(b[sortCol])) * sortDir;
+  });
+
+  // Regex search
+  let regex = null;
+  if (query) {
+    try {
+      regex = new RegExp(query, searchCase.checked ? '' : 'i');
+      searchMeta.textContent = '';
+    } catch {
+      searchMeta.textContent = 'Invalid regex pattern — try simpler text.';
+      regex = null;
+    }
+  }
+
+  if (regex) {
+    records = records.filter(r =>
+      regex.test(r.description) || regex.test(r.category)
+    );
+  }
+
+  searchMeta.textContent = query
+    ? `${records.length} result${records.length !== 1 ? 's' : ''} found`
+    : `${records.length} transaction${records.length !== 1 ? 's' : ''}`;
+
+  // Show/hide empty state
+  const tableWrapper = document.querySelector('.table-wrapper');
+  emptyState.hidden  = records.length > 0;
+  tableWrapper.style.display = records.length === 0 ? 'none' : '';
+
+  // Build rows
+  tbody.innerHTML = '';
+  records.forEach(record => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${highlight(record.description, regex)}</td>
+      <td class="col-hide-mobile">
+        <span class="badge badge-${escapeHtml(record.category)}">${highlight(record.category, regex)}</span>
+      </td>
+      <td>RWF ${Number(record.amount).toLocaleString()}</td>
+      <td>${escapeHtml(record.date)}</td>
+      <td>
+        <div class="row-actions">
+          <button class="btn btn-outline" style="padding:0.3rem 0.7rem;font-size:0.8rem;" data-edit="${record.id}">Edit</button>
+          <button class="btn btn-danger"  style="padding:0.3rem 0.7rem;font-size:0.8rem;" data-delete="${record.id}">Delete</button>
+        </div>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  // Edit listeners
+  tbody.querySelectorAll('[data-edit]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const record = getState().find(r => r.id === btn.dataset.edit);
+      if (!record) return;
+      fields.description.value = record.description;
+      fields.amount.value      = record.amount;
+      fields.date.value        = record.date;
+      fields.category.value    = record.category;
+      editIdInput.value        = record.id;
+      formTitle.textContent    = 'Edit Transaction';
+      showSection('add');
+    });
+  });
+
+  // Delete listeners
+  tbody.querySelectorAll('[data-delete]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (confirm('Delete this transaction?')) {
+        deleteRecord(btn.dataset.delete);
+        renderRecords();
+      }
+    });
+  });
+}
+
+// ── Sort buttons ──────────────────────────────────────────────────────────────
+document.querySelectorAll('.sort-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const col = btn.dataset.sort;
+    sortDir = sortCol === col ? sortDir * -1 : 1;
+    sortCol = col;
+    renderRecords();
+  });
+});
+
+// ── Search ────────────────────────────────────────────────────────────────────
+searchInput.addEventListener('input', renderRecords);
+searchCase.addEventListener('change', renderRecords);
+
+// ── Add buttons ───────────────────────────────────────────────────────────────
+document.getElementById('btn-go-add').addEventListener('click', () => showSection('add'));
+document.getElementById('btn-empty-add').addEventListener('click', () => showSection('add'));
+
+// ── Initial page ──────────────────────────────────────────────────────────────
 showSection('about');
