@@ -1,4 +1,3 @@
-import { renderDashboard } from './dashboard.js';
 import { getState } from './state.js';
 
 const CAP_KEY = 'finance-tracker:cap';

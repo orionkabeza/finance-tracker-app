@@ -133,13 +133,13 @@
     <section id="add" class="page-section" hidden>
       <h2 id="form-title">Add Transaction</h2>
       
-      <div role="status" aia-live="polite" id="form-status"></div>
+      <div role="status" aria-live="polite" id="form-status"></div>
 
       <div class="card">
         <form id="transaction-form" novalidate>
             <!---novalidate turn off the browser's built in validation so that ours can run-->
         <input type="hidden" id="edit-id" value="" />
-        <div class="from-group">
+        <div class="form-group">
             <label for="field-description">Description</label>
             <input
               type="text"

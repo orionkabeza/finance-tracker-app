@@ -5,9 +5,10 @@
     --color-surface: #FFFFFF;
     --color-text: #1A1A1A;
     --color-text-muted: #5F5E5A;
-    --color-border: #A32D2D;
+    --color-border: #D8D5CC;
+    --color-danger: #A32D2D;
 
-    --font-sans: system-ui, -apple-systems, sans-serif;
+    --font-sans: system-ui, -apple-system, sans-serif;
     --radius:    8px;
     --shadow:    0 1px 3px rgba(0,0,0,0.08);
 
@@ -43,7 +44,7 @@ body{
     font-weight: 500;
     text-decoration: none;
     z-index: 999;
-    transition: top0.2s;
+    transition: top 0.2s;
 }
 .skip-link:focus {
     top: 1rem;
@@ -109,7 +110,7 @@ main {
 }
 
 .page-section {
-    animation: fadeIn 0.s ease;
+    animation: fadeIn 0.3s ease;
 }
 
 .page-section[hidden] {
@@ -130,7 +131,7 @@ a { color: var(--color-primary); }
 
 footer {
     text-align: center;
-    padding: 2rem 1 rem;
+    padding: 2rem 1rem;
     color: var(--color-text-muted);
     font-size: 0.875rem;
     border-top: 1px solid var(--color-border);

@@ -1,7 +1,7 @@
 import { validateDescription, validateAmount, validateDate, validateCategory, validateForm } from './validators.js';
-import { getState, addRecord, updateRecord, deleteRecord } from './state.js';
-
-
+import { getState, addRecord, updateRecord, deleteRecord, seedIfEmpty } from './state.js';
+import { compileRegex, highlight, escapeHtml, matchesRecord } from './search.js';
+import { renderDashboard } from './dashboard.js';
 import { initSettings } from './settings.js';
 // ── Section navigation ────────────────────────────────────────────────────────
 const sections = document.querySelectorAll('.page-section');
@@ -118,19 +118,6 @@ const searchCase  = document.getElementById('search-case');
 let sortCol = 'date';
 let sortDir = -1;
 
-function escapeHtml(str) {
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-}
-
-function highlight(text, regex) {
-  if (!regex) return escapeHtml(text);
-  return escapeHtml(text).replace(regex, m => `<mark>${m}</mark>`);
-}
-
 export function renderRecords() {
   let records = [...getState()];
   const query = searchInput.value.trim();
@@ -141,27 +128,26 @@ export function renderRecords() {
     return String(a[sortCol]).localeCompare(String(b[sortCol])) * sortDir;
   });
 
-  // Regex search
+  // Regex search — compile safely, then filter
   let regex = null;
+  let invalidPattern = false;
   if (query) {
-    try {
-      regex = new RegExp(query, searchCase.checked ? '' : 'i');
-      searchMeta.textContent = '';
-    } catch {
-      searchMeta.textContent = 'Invalid regex pattern — try simpler text.';
-      regex = null;
+    regex = compileRegex(query, searchCase.checked);
+    if (regex) {
+      records = records.filter(r => matchesRecord(r, regex));
+    } else {
+      invalidPattern = true;
     }
   }
 
-  if (regex) {
-    records = records.filter(r =>
-      regex.test(r.description) || regex.test(r.category)
-    );
+  // Status message: invalid-pattern message must NOT be overwritten by the count
+  if (invalidPattern) {
+    searchMeta.textContent = 'Invalid regex pattern — showing all records.';
+  } else if (query) {
+    searchMeta.textContent = `${records.length} result${records.length !== 1 ? 's' : ''} found`;
+  } else {
+    searchMeta.textContent = `${records.length} transaction${records.length !== 1 ? 's' : ''}`;
   }
-
-  searchMeta.textContent = query
-    ? `${records.length} result${records.length !== 1 ? 's' : ''} found`
-    : `${records.length} transaction${records.length !== 1 ? 's' : ''}`;
 
   // Show/hide empty state
   const tableWrapper = document.querySelector('.table-wrapper');
@@ -234,4 +220,5 @@ document.getElementById('btn-go-add').addEventListener('click', () => showSectio
 document.getElementById('btn-empty-add').addEventListener('click', () => showSection('add'));
 
 // ── Initial page ──────────────────────────────────────────────────────────────
-showSection('about');
+// Load seed data on first run (if any), then show the landing section.
+seedIfEmpty().finally(() => showSection('about'));

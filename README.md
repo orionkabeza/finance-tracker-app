@@ -3,7 +3,7 @@
 A responsive, accessible, vanilla HTML/CSS/JS web app for tracking student expenses.
 No frameworks. No libraries. Just clean, modular code.
 
-**Live demo:** https://YOUR-USERNAME.github.io/finance-tracker-app
+**Live demo:** https://orionkabeza.github.io/finance-tracker-app
 
 ---
 
@@ -80,10 +80,12 @@ finance-tracker-app/
 │   └── components.css  — buttons, forms, table, cards
 ├── scripts/
 │   ├── storage.js      — localStorage read/write
-│   ├── state.js        — app data in memory
+│   ├── state.js        — app data in memory (CRUD + timestamps)
 │   ├── validators.js   — all regex validation rules
-│   ├── search.js       — regex search + highlight
-│   └── ui.js           — DOM updates, rendering, events
+│   ├── search.js       — safe regex compiler, escaping + highlight
+│   ├── ui.js           — DOM updates, rendering, navigation, events
+│   ├── dashboard.js    — stats, budget cap, 7-day trend chart
+│   └── settings.js     — currency rates, JSON import/export
 └── assets/
     └── wireframes.png  — M1 wireframe sketches
 ```
@@ -92,8 +94,8 @@ finance-tracker-app/
 
 ## How to Run Tests
 1. Open `tests.html` in your browser
-2. Open the browser console (F12 → Console)
-3. All regex test results print automatically — green = pass, red = fail
+2. Each regex rule runs automatically and renders in the results table
+3. Green = pass, red = fail; the summary line shows the total passed/failed
 
 No build step. No npm. Just open the file.
 
@@ -128,6 +130,11 @@ Supported: RWF, USD, EUR (rates editable, no API dependency).
 ---
 
 ## Seed Data
-`seed.json` contains 10 diverse records covering edge cases:
+`seed.json` contains 12 diverse records covering edge cases:
 large amounts, small amounts, multi-word descriptions, all categories,
-and date range spread across multiple months.
+and dates spread across multiple months.
+
+On a fresh browser (empty localStorage) the app auto-loads `seed.json` once so
+the deployed demo isn't empty. After that your own data takes over — deleting
+records won't re-seed them. You can also load it manually any time via
+**Settings → Import JSON**.

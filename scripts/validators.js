@@ -20,9 +20,11 @@ const PATTERN_DUPLICATE_WORD = /\b(\w+)\s+\1\b/i;
 export function validateDescription(value) {
     if (!value.trim()) return 'Description is required.';
     if (!PATTERN_DESCRIPTION.test(value))
-        return 'No leading, trailing, or double spaces allowed.'
+        return 'No leading or trailing spaces allowed.';
+    if (/\s{2,}/.test(value))
+        return 'No double (or repeated) spaces allowed.';
     if (PATTERN_DUPLICATE_WORD.test(value))
-        return 'Contain a repeated word (e.g. "the the").';
+        return 'Contains a repeated word (e.g. "the the").';
     if (value.length > 120) return 'Maximum 120 characters.';
     return '';
 }
@@ -38,7 +40,7 @@ export function validateAmount(value) {
 export function validateDate(value) {
     if (!value.trim()) return 'Date is required.';
     if (!PATTERN_DATE.test(value))
-        return 'Us ethe format YYYY-MM-DD (e.g. 2025-05-17).';
+        return 'Use the format YYYY-MM-DD (e.g. 2025-05-17).';
     return '';
 }
 
