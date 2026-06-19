@@ -1,6 +1,8 @@
 import { validateDescription, validateAmount, validateDate, validateCategory, validateForm } from './validators.js';
 import { getState, addRecord, updateRecord, deleteRecord } from './state.js';
 
+
+import { initSettings } from './settings.js';
 // ── Section navigation ────────────────────────────────────────────────────────
 const sections = document.querySelectorAll('.page-section');
 const navLinks  = document.querySelectorAll('.nav-link');
@@ -10,7 +12,9 @@ export function showSection(id) {
   navLinks.forEach(link => {
     link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
   });
-  if (id === 'records') renderRecords();
+  if (id === 'records')   renderRecords();
+  if (id === 'dashboard') renderDashboard();
+  if (id === 'settings')  initSettings();
 }
 
 navLinks.forEach(link => {

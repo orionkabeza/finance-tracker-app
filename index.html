@@ -38,11 +38,53 @@
 
     <!-- DASHBOARD -->
     <section id="dashboard" class="page-section" hidden>
-      <h2>Dashboard</h2>
-      <!-- Stats and chart go here in M5 -->
-      <!-- ARIA live region: announces budget cap status to screen readers -->
-      <div role="status" aria-live="polite" id="cap-status"></div>
-    </section>
+  <h2>Dashboard</h2>
+
+  <!-- Budget cap input -->
+  <div class="card" style="margin-bottom:1.5rem;">
+    <div style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap;">
+      <div class="form-group" style="margin:0; flex:1; min-width:180px;">
+        <label for="cap-input">Monthly Budget Cap (RWF)</label>
+        <input type="text" id="cap-input" placeholder="e.g. 50000" inputmode="decimal" />
+      </div>
+      <button class="btn btn-primary" id="cap-save-btn" style="margin-top:1.2rem;">Set Cap</button>
+    </div>
+    <!-- ARIA live: polite when under budget, assertive when over -->
+    <div id="cap-status" role="status" aria-live="polite" style="margin-top:0.75rem; font-size:0.9rem;"></div>
+  </div>
+
+  <!-- Stat cards -->
+  <div class="stat-grid">
+    <div class="stat-card">
+      <div class="stat-label">Total Transactions</div>
+      <div class="stat-value" id="stat-count">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Total Spent (RWF)</div>
+      <div class="stat-value" id="stat-total">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Top Category</div>
+      <div class="stat-value" style="font-size:1.1rem;" id="stat-top-cat">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Last 7 Days (RWF)</div>
+      <div class="stat-value" id="stat-7days">0</div>
+    </div>
+  </div>
+
+  <!-- 7-day trend chart -->
+  <div class="card" style="margin-top:1.5rem;">
+    <h3 style="margin-bottom:1rem;">7-Day Spending Trend</h3>
+    <div id="chart" style="display:flex; align-items:flex-end; gap:6px; height:120px; padding:0 4px;">
+      <!-- bars inserted by JS -->
+    </div>
+    <div id="chart-labels" style="display:flex; gap:6px; margin-top:6px; padding:0 4px;">
+      <!-- labels inserted by JS -->
+    </div>
+  </div>
+
+</section>
 
     <!-- RECORDS -->
     <section id="records" class="page-section" hidden>
@@ -167,9 +209,43 @@
 
     <!-- SETTINGS -->
     <section id="settings" class="page-section" hidden>
-      <h2>Settings</h2>
-      <!-- Currency settings go here in M6 -->
-    </section>
+  <h2>Settings</h2>
+
+  <!-- Currency -->
+  <div class="card" style="margin-bottom:1.5rem;">
+    <h3>Currency & Exchange Rates</h3>
+    <p>Base currency is RWF. Set manual rates for conversion.</p>
+    <div class="form-row" style="margin-top:1rem;">
+      <div class="form-group">
+        <label for="rate-usd">1 USD = RWF</label>
+        <input type="text" id="rate-usd" placeholder="e.g. 1300" inputmode="decimal" />
+      </div>
+      <div class="form-group">
+        <label for="rate-eur">1 EUR = RWF</label>
+        <input type="text" id="rate-eur" placeholder="e.g. 1400" inputmode="decimal" />
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-primary" id="save-rates-btn">Save Rates</button>
+    </div>
+    <div id="rates-status" role="status" aria-live="polite" style="margin-top:0.5rem; font-size:0.875rem;"></div>
+  </div>
+
+  <!-- Import / Export -->
+  <div class="card">
+    <h3>Import / Export Data</h3>
+    <p>Export your transactions as JSON or import from a previously exported file.</p>
+    <div class="form-actions" style="margin-top:1rem;">
+      <button class="btn btn-accent" id="export-btn">Export JSON</button>
+      <label class="btn btn-outline" style="cursor:pointer;">
+        Import JSON
+        <input type="file" id="import-input" accept=".json" style="display:none;" />
+      </label>
+    </div>
+    <div id="import-status" role="status" aria-live="polite" style="margin-top:0.75rem; font-size:0.875rem;"></div>
+  </div>
+
+</section>
 
   </main>
 
@@ -183,6 +259,8 @@
   <script type="module" src="scripts/validators.js"></script>
   <script type="module" src="scripts/search.js"></script>
   <script type="module" src="scripts/ui.js"></script>
+  <script type="module" src="scripts/dashboard.js"></script>
+  <script type="module" src="scripts/settings.js"></script>
 
 </body>
 </html>
