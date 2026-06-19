@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Regex Tests — Finance Tracker</title>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 2rem; background: #f1efe8; }
+    h1   { margin-bottom: 1.5rem; }
+    .pass { color: #0f6e56; font-weight: 500; }
+    .fail { color: #a32d2d; font-weight: 500; }
+    table { border-collapse: collapse; width: 100%; background: #fff; border-radius: 8px; overflow: hidden; }
+    th, td { padding: 0.6rem 1rem; text-align: left; border-bottom: 1px solid #d3d1c7; font-size: 0.9rem; }
+    th { background: #185FA5; color: #fff; }
+    #summary { margin-top: 1.5rem; font-size: 1rem; font-weight: 500; }
+  </style>
+</head>
+<body>
+  <h1>Regex Unit Tests</h1>
+  <table>
+    <thead>
+      <tr><th>Rule</th><th>Input</th><th>Expected</th><th>Result</th></tr>
+    </thead>
+    <tbody id="results"></tbody>
+  </table>
+  <div id="summary"></div>
+
+  <script type="module">
+    import { validateDescription, validateAmount, validateDate, validateCategory } from './scripts/validators.js';
+
+    const tests = [
+      // Description
+      { rule: 'Description — valid',           fn: validateDescription, input: 'Lunch at cafeteria',  expect: '' },
+      { rule: 'Description — leading space',   fn: validateDescription, input: ' Lunch',              expect: 'error' },
+      { rule: 'Description — trailing space',  fn: validateDescription, input: 'Lunch ',              expect: 'error' },
+      { rule: 'Description — double space',    fn: validateDescription, input: 'Lunch  at cafe',      expect: 'error' },
+      { rule: 'Description — duplicate word',  fn: validateDescription, input: 'the the bus',         expect: 'error' },
+      { rule: 'Description — empty',           fn: validateDescription, input: '',                    expect: 'error' },
+
+      // Amount
+      { rule: 'Amount — valid integer',        fn: validateAmount, input: '1000',   expect: '' },
+      { rule: 'Amount — valid decimal',        fn: validateAmount, input: '12.50',  expect: '' },
+      { rule: 'Amount — zero',                 fn: validateAmount, input: '0',      expect: 'error' },
+      { rule: 'Amount — 3 decimal places',     fn: validateAmount, input: '12.505', expect: 'error' },
+      { rule: 'Amount — negative',             fn: validateAmount, input: '-5',     expect: 'error' },
+      { rule: 'Amount — letters',              fn: validateAmount, input: 'abc',    expect: 'error' },
+      { rule: 'Amount — empty',                fn: validateAmount, input: '',       expect: 'error' },
+
+      // Date
+      { rule: 'Date — valid',                  fn: validateDate, input: '2025-09-29', expect: '' },
+      { rule: 'Date — invalid month 13',       fn: validateDate, input: '2025-13-01', expect: 'error' },
+      { rule: 'Date — wrong format',           fn: validateDate, input: '29-09-2025', expect: 'error' },
+      { rule: 'Date — empty',                  fn: validateDate, input: '',           expect: 'error' },
+
+      // Category
+      { rule: 'Category — valid',              fn: validateCategory, input: 'Food',    expect: '' },
+      { rule: 'Category — empty',              fn: validateCategory, input: '',        expect: 'error' },
+      { rule: 'Category — numbers',            fn: validateCategory, input: 'Food123', expect: 'error' },
+    ];
+
+    const tbody  = document.getElementById('results');
+    let passed   = 0;
+    let failed   = 0;
+
+    tests.forEach(({ rule, fn, input, expect }) => {
+      const result  = fn(input);
+      const isError = result !== '';
+      const ok      = expect === '' ? result === '' : isError;
+
+      if (ok) passed++; else failed++;
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${rule}</td>
+        <td><code>${input === '' ? '(empty)' : input}</code></td>
+        <td>${expect === '' ? 'valid' : 'error'}</td>
+        <td class="${ok ? 'pass' : 'fail'}">${ok ? '✓ Pass' : '✗ Fail — got: ' + (result || 'no error')}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    document.getElementById('summary').textContent =
+      `${passed} passed, ${failed} failed out of ${tests.length} tests.`;
+  </script>
+</body>
+</html>

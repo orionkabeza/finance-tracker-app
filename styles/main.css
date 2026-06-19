@@ -151,3 +151,11 @@ footer {
     .logo { font-size: 1rem; }
     .nav-link { padding: 0.4rem 0.5rem; font-size: 0.8rem; }
 }
+.stat-card {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}

@@ -1,0 +1,14 @@
+[
+  {"id":"txn_001","description":"Lunch at cafeteria","amount":1200,"category":"Food","date":"2026-06-12","createdAt":"2026-06-12T08:00:00.000Z","updatedAt":"2026-06-12T08:00:00.000Z"},
+  {"id":"txn_002","description":"Chemistry textbook","amount":18000,"category":"Books","date":"2026-06-10","createdAt":"2026-06-10T09:00:00.000Z","updatedAt":"2026-06-10T09:00:00.000Z"},
+  {"id":"txn_003","description":"Monthly bus pass","amount":8500,"category":"Transport","date":"2026-06-01","createdAt":"2026-06-01T07:00:00.000Z","updatedAt":"2026-06-01T07:00:00.000Z"},
+  {"id":"txn_004","description":"Coffee with friends","amount":2500,"category":"Entertainment","date":"2026-06-13","createdAt":"2026-06-13T14:00:00.000Z","updatedAt":"2026-06-13T14:00:00.000Z"},
+  {"id":"txn_005","description":"Tuition fees payment","amount":150000,"category":"Fees","date":"2026-06-05","createdAt":"2026-06-05T10:00:00.000Z","updatedAt":"2026-06-05T10:00:00.000Z"},
+  {"id":"txn_006","description":"Notebook and pens","amount":3500,"category":"Books","date":"2026-06-14","createdAt":"2026-06-14T11:00:00.000Z","updatedAt":"2026-06-14T11:00:00.000Z"},
+  {"id":"txn_007","description":"Moto taxi to campus","amount":500,"category":"Transport","date":"2026-06-15","createdAt":"2026-06-15T07:30:00.000Z","updatedAt":"2026-06-15T07:30:00.000Z"},
+  {"id":"txn_008","description":"Movie night ticket","amount":5000,"category":"Entertainment","date":"2026-06-11","createdAt":"2026-06-11T18:00:00.000Z","updatedAt":"2026-06-11T18:00:00.000Z"},
+  {"id":"txn_009","description":"Groceries for the week","amount":12000,"category":"Food","date":"2026-06-16","createdAt":"2026-06-16T09:00:00.000Z","updatedAt":"2026-06-16T09:00:00.000Z"},
+  {"id":"txn_010","description":"Printing assignment","amount":800,"category":"Other","date":"2026-06-17","createdAt":"2026-06-17T10:00:00.000Z","updatedAt":"2026-06-17T10:00:00.000Z"},
+  {"id":"txn_011","description":"Water bottle","amount":300,"category":"Other","date":"2026-06-08","createdAt":"2026-06-08T12:00:00.000Z","updatedAt":"2026-06-08T12:00:00.000Z"},
+  {"id":"txn_012","description":"Programming book advanced","amount":25000,"category":"Books","date":"2026-05-28","createdAt":"2026-05-28T10:00:00.000Z","updatedAt":"2026-05-28T10:00:00.000Z"}
+]
