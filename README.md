@@ -4,6 +4,7 @@ A responsive, accessible, vanilla HTML/CSS/JS web app for tracking student expen
 No frameworks. No libraries. Just clean, modular code.
 
 **Live demo:** https://orionkabeza.github.io/finance-tracker-app
+**Youtube Video:** https://youtu.be/XvdNOI3irTE
 
 ---
 
